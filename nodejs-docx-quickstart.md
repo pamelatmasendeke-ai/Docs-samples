@@ -1,6 +1,6 @@
 # Generating Word documents programmatically with Node.js
 
-If you've ever built a feature that needs to hand someone a `.docx` file — an invoice, a report, a contract — you've probably found that the ecosystem here is thinner than it should be. Most tutorials stop at "install a library" and never show you the part that actually breaks: tables, styling, and getting real data into the document without hand-editing XML.
+If you've ever built a feature that needs to hand someone a `.docx` file. Could be an invoice, a report, a contract — you've probably found that the ecosystem here is thinner than it should be. Most tutorials stop at "install a library" and never show the part that breaks: tables, styling, and getting real data into the document without hand-editing XML.
 
 This walks through building an invoice generator with [`docx`](https://www.npmjs.com/package/docx), a well-maintained Node.js library for creating `.docx` files from scratch. No Microsoft Word, no COM automation, no server running Windows. Every code sample below has been run and the output verified.
 
@@ -45,7 +45,7 @@ const total = invoice.items.reduce(
 
 ## Step 2: Build the table
 
-This is the part most tutorials skip. Tables in `docx` are built from `Table`, `TableRow`, and `TableCell` objects — you construct the header row and the data rows separately, then combine them into a single array.
+Tables in `docx` are built from `Table`, `TableRow`, and `TableCell` objects — you construct the header row and the data rows separately, then combine them into a single array.
 
 ```javascript
 const {
@@ -95,7 +95,7 @@ const tableRows = [
 ];
 ```
 
-**A gotcha worth flagging:** every `TableCell` needs an explicit `width`, and those widths need to sum to the table's total width. Skip this and some renderers (Google Docs especially) will render the table with badly collapsed columns.
+**Worth flagging:** every `TableCell` needs an explicit `width`, and those widths need to sum to the table's total width. Skip this and some renderers (Google Docs especially) will render the table with badly collapsed columns.
 
 ## Step 3: Assemble the document
 
@@ -130,7 +130,7 @@ const doc = new Document({
 });
 ```
 
-Note the `HeadingLevel.HEADING_1` — using the library's built-in heading levels (rather than just bolding some text) is what makes the heading show up correctly in Word's navigation pane and in any table of contents you add later.
+Note the `HeadingLevel.HEADING_1` . Using the library's built-in heading levels (rather than just bolding some text) is what makes the heading show up correctly in Word's navigation pane and in any table of contents you add later.
 
 ## Step 4: Write it to disk
 
@@ -144,7 +144,7 @@ Packer.toBuffer(doc).then((buffer) => {
 });
 ```
 
-`Packer.toBuffer()` is asynchronous — a common early mistake is calling `fs.writeFileSync` before the buffer resolves, which throws.
+`Packer.toBuffer()` is asynchronous. A common early mistake is calling `fs.writeFileSync` before the buffer resolves, which throws.
 
 ## Running it
 
@@ -156,7 +156,7 @@ node generate-report.js
 invoice.docx created
 ```
 
-Opening the result shows a properly formatted document: a heading, a labeled table with bold headers, and a bold total line — not a wall of unstyled text.
+Opening the result shows a properly formatted document: a heading, a labeled table with bold headers, and a bold total line.
 
 ## Verifying your output without opening Word
 
@@ -167,10 +167,10 @@ soffice --headless --convert-to pdf invoice.docx
 pdftoppm -jpeg -r 120 invoice.pdf preview
 ```
 
-This converts the `.docx` to a PDF headlessly, then rasterizes it to a JPEG you can inspect — useful for catching layout issues (like the column-width gotcha above) before a document ships to a client or a user.
+This converts the `.docx` to a PDF headlessly, then rasterizes it to a JPEG you can inspect. This is useful for catching layout issues (like the column-width issue we flagged above) before a document ships to a client or a user.
 
 ## Where this goes from here
 
-The same pattern — build data, map it into `TableRow`/`Paragraph` objects, pack it to a buffer — scales to much more complex documents: multi-page reports, documents with images (`ImageRun`), page breaks, and headers/footers. The library also supports numbered lists, custom styles, and landscape orientation, all of which follow the same object-composition approach shown here rather than requiring template files.
+The same pattern: build data, map it into `TableRow`/`Paragraph` objects, pack it to a buffer. This scales to much more complex documents: multi-page reports, documents with images (`ImageRun`), page breaks, and headers/footers. The library also supports numbered lists, custom styles, and landscape orientation, all of which follow the same object-composition approach shown here rather than requiring template files.
 
-If you're building a Node.js app that needs to hand users a Word document — reports, certificates, generated contracts — this approach avoids the overhead of a templating engine or a headless-Word dependency, and it's fully scriptable, which matters if the documents need to be generated on a schedule or in response to an API call.
+If you're building a Node.js app that needs to hand users a Word document (reports, certificates, generated contracts) this approach avoids the overhead of a templating engine or a headless-Word dependency, and it's fully scriptable, which matters if the documents need to be generated on a schedule or in response to an API call.
